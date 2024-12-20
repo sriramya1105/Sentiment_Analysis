@@ -8,11 +8,9 @@ from sklearn.linear_model import LogisticRegression
 from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
 from langdetect import detect
-from googletrans import Translator
-from PIL import Image, ImageDraw
+from deep_translator import GoogleTranslator
+from PIL import Image
 import base64
-
-
 
 # Download NLTK resources
 nltk.download('stopwords')
@@ -47,9 +45,8 @@ def detect_and_translate(text):
     
     # Translate to English if not already in English
     if detected_language != 'en':
-        translator = Translator()
-        translation = translator.translate(text, src=detected_language, dest='en')
-        translated_text = translation.text
+        translator = GoogleTranslator(source=detected_language, target='en')
+        translated_text = translator.translate(text)
     else:
         translated_text = text
 
@@ -83,122 +80,45 @@ except FileNotFoundError:
     vectorizer = None
 
 # Streamlit App
-st.image("assets\AVN logo.jpg", width=800) 
-# Custom CSS for specific text sections
-st.markdown(
-    """
-    <style>
-    .title-text {
-        color: white; /* Set text color to white */
-        font-size: 2.5rem; /* Optional: Adjust font size */
-        font-weight: bold; /* Optional: Add bold styling */
-    }
-    .content-text {
-        color: white; /* Set text color to white */
-        font-size: 1rem; /* Optional: Adjust font size */
-    }
-    </style>
-    """,
-    unsafe_allow_html=True
-)
+st.image("assets/AVN logo.jpg", width=800) 
+
+
 
 # Set title with custom styling
-st.markdown('<h1 class="title-text">Emotion-Driven Multilingual Sentiment Analysis Web Application using NLP</h1>', unsafe_allow_html=True)
+st.markdown('Emotion-Driven Multilingual Sentiment Analysis Web Application using NLP')
 
-# Set write content with custom styling
-st.markdown(
-    """
-    <div class="content-text">
-    This app predicts emotion for given text or a CSV file. It also detects the language and translates text to English if needed.
-    </div>
-    """,
-    unsafe_allow_html=True
-)
+st.subheader("User Guide")
+st.write("""
+This app performs sentiment analysis on user input text or reviews in a CSV file. 
+It includes the following features:
 
-st.markdown(
-    """
-    <div class="content-text">
-    <h2>User Guide:</h2>
-    This app performs sentiment analysis on user input text or reviews in a CSV file. 
-    It includes the following features:
-    <ol>
-        <li><em>Text Sentiment Analysis</em>: Detects the language, translates it (if needed), and predicts emotions.</li>
-        <li><em>Bulk Analysis</em>: Upload a CSV file containing reviews, and the app will predict emotions for each review.</li>
-        <li><em>Emotion Count Summary</em>: View the count of each emotion predicted for the uploaded reviews.</li>
-        <li><em>Download Results</em>: After analysis, you can download the results as a CSV file with predictions.</li>
-    </ol>
-    <h3>How to Use:</h3>
-    <ul>
-        <li><strong>Step 1: Test Your Text</strong>: Enter text in any language for emotion prediction.</li>
-        <ul>
-            <li>The app will automatically detect the language, translate the text to English (if necessary), and predict the emotion.</li>
-        </ul>
-        <li><strong>Step 2: Bulk Analysis with CSV File</strong>: Upload a CSV file with a "Review" column.</li>
-        <ul>
-            <li>The app will process each review, detect the language, translate (if needed), and predict the emotion.</li>
-            <li>You can download the results after processing.</li>
-        </ul>
-    </ul>
-    <h3>Example:</h3>
-    <ul>
-        <li><em>Input (Telugu)</em>: "నేను చాలా సంతోషంగా ఉన్నాను"</li>
-        <li><em>Detected Language</em>: Telugu</li>
-        <li><em>Translated Text</em>: "I am very happy"</li>
-        <li><em>Predicted Emotion</em>: Joy</li>
-    </ul>
-    In this example, the text is in Telugu, and the app detects the language, translates it into English, and then predicts the emotion as "Joy."
-    </div>
-    """,
-    unsafe_allow_html=True
-)
-# Function to set the background
-def add_background(image_file):
-    with open(image_file, "rb") as file:
-        encoded_string = base64.b64encode(file.read()).decode()
-    st.markdown(
-        f"""
-        <style>
-        .stApp {{
-            background-color:skyblue;
-            background-size: cover;
-        }}
-        </style>
-        """,
-        unsafe_allow_html=True
-    )
+1. **Text Sentiment Analysis**: Detects the language, translates it (if needed), and predicts emotions.
+2. **Bulk Analysis**: Upload a CSV file containing reviews, and the app will predict emotions for each review.
+3. **Emotion Count Summary**: View the count of each emotion predicted for the uploaded reviews.
+4. **Download Results**: After analysis, you can download the results as a CSV file with predictions.
 
-# Use your uploaded image
-image_path = "assets/baground.jpeg"  # Replace with your image file path
-add_background(image_path)
+### Example:
+- **Input (Telugu)**: "నేను చాలా సంతోషంగా ఉన్నాను"
+- **Detected Language**: Telugu
+- **Translated Text**: "I am very happy"
+- **Predicted Emotion**: Joy
+
+In this example, the text is in Telugu, and the app detects the language, translates it into English, and then predicts the emotion as "Joy."
+""")
 
 
 # Add sidebar with project details
-st.sidebar.image("assets/team.jpeg" , width=300)
+st.sidebar.image("assets/team.jpeg", width=300)
 st.sidebar.title("Project Details")
 st.sidebar.write("### AIML Department")
-st.sidebar.write("Department Head: Dr.M.Jayaram(Professor)")
-st.sidebar.write("Project Guide: CH.Jyothi(Assistant Professor)")
+st.sidebar.write("Department Head: Dr.M.Jayaram (Professor)")
+st.sidebar.write("Project Guide: CH.Jyothi (Assistant Professor)")
 st.sidebar.write("Project Batch: A-12")
 st.sidebar.write("Team Members:")
 st.sidebar.write("- K. Sri Ramya")
 st.sidebar.write("- Chikkapalli Lavanya")
 st.sidebar.write("- Endapalli Dinesh")
 st.sidebar.write("- Kompalli Mahesh")
-# Customizing the sidebar appearance
-st.markdown(
-    """
-    <style>
-    [data-testid="stSidebar"] {
-        background-color: black; /* Navy Blue Background */
-        color: white; /* White text */
-    }
-    [data-testid="stSidebar"] h1, [data-testid="stSidebar"] h2, [data-testid="stSidebar"] h3 {
-        color: white; /* Ensure headings in the sidebar are white */
-    }
-    </style>
-    """,
-    unsafe_allow_html=True,
-)
 
 # User Input Text Analysis
 st.subheader("Test Your Text")
@@ -254,8 +174,7 @@ if st.button("Predict Emotion") and model and vectorizer:
             "sadness":"assets/sad.jpg",
             "Surprise":"assets/surprise.jpg"
         }
-
-        # Use the prediction as the key for the image mapping
+       # Use the prediction as the key for the image mapping
         if prediction.lower() in image_mapping:
             img = load_and_resize_image(image_mapping[prediction.lower()], size=(300, 300))
             st.image(img, caption=prediction.capitalize())
